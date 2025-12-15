@@ -132,8 +132,8 @@ export function AdminProvider({ children }) {
         .insert([{
           title: book.title,
           author: book.author,
-          cover_image: book.coverImage,
-          short_description: book.shortDescription,
+          cover_image: book.cover_image,
+          short_description: book.short_description,
           full_description: book.fullDescription,
           publish_year: book.publishYear,
           pages: book.pages,
@@ -161,8 +161,8 @@ export function AdminProvider({ children }) {
         .update({
           title: updatedBook.title,
           author: updatedBook.author,
-          cover_image: updatedBook.coverImage,
-          short_description: updatedBook.shortDescription,
+          cover_image: updatedBook.cover_image,
+          short_description: updatedBook.short_description,
           full_description: updatedBook.fullDescription,
           publish_year: updatedBook.publishYear,
           pages: updatedBook.pages,

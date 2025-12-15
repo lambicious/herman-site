@@ -43,7 +43,7 @@ function BookDetailPage() {
             {/* Linker Kolom - Boek Cover */}
             <div className="flex justify-center">
               <img 
-                src={book.coverImage} 
+                src={book.cover_image} 
                 alt={book.title}
                 className="rounded-lg shadow-lg max-w-md w-full object-cover"
               />
@@ -63,7 +63,7 @@ function BookDetailPage() {
               <div className="space-y-3 mb-8 text-gray-700">
                 <div className="flex items-center">
                   <span className="font-semibold w-32">Publicatiejaar:</span>
-                  <span>{book.publishYear}</span>
+                  <span>{book.publish_year}</span>
                 </div>
                 <div className="flex items-center">
                   <span className="font-semibold w-32">Pagina's:</span>
@@ -81,18 +81,19 @@ function BookDetailPage() {
                   Over dit boek
                 </h2>
                 <p className="text-gray-700 leading-relaxed whitespace-pre-line">
-                  {book.fullDescription}
+                  {book.full_description}
                 </p>
               </div>
 
               {/* Optioneel: Koop knoppen (kan je later toevoegen) */}
               <div className="mt-8 flex gap-4">
-                <button className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
-                  Bestel nu
-                </button>
-                <button className="border-2 border-gray-300 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:border-gray-400 transition-colors">
-                  Voorbeeld lezen
-                </button>
+              <button
+                onClick={() => window.open(book.order_url, "_blank", "noopener,noreferrer")}
+                className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+              >
+                Bestel nu
+              </button>
+
               </div>
             </div>
 

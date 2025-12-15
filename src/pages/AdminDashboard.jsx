@@ -187,13 +187,13 @@ return (
                   setEditingBook({
                     title: '',
                     author: authorData.name,
-                    coverImage: '/images/book-placeholder.jpg',
-                    shortDescription: '',
-                    fullDescription: '',
-                    publishYear: new Date().getFullYear(),
+                    cover_image: '/images/book-placeholder.jpg',
+                    short_description: '',
+                    full_description: '',
+                    publish_year: new Date().getFullYear(),
                     pages: 0,
                     isbn: '',
-                    orderUrl: ''
+                    order_url: ''
                   });
                   setShowBookForm(true);
                 }}
@@ -244,8 +244,8 @@ return (
                     </label>
                     <input
                       type="text"
-                      value={editingBook.coverImage}
-                      onChange={(e) => setEditingBook({...editingBook, coverImage: e.target.value})}
+                      value={editingBook.cover_image}
+                      onChange={(e) => setEditingBook({...editingBook, cover_image: e.target.value})}
                       placeholder="/images/book1.jpg"
                       className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 font-body focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent"
                     />
@@ -259,8 +259,8 @@ return (
                       Korte Beschrijving *
                     </label>
                     <textarea
-                      value={editingBook.shortDescription}
-                      onChange={(e) => setEditingBook({...editingBook, shortDescription: e.target.value})}
+                      value={editingBook.short_description}
+                      onChange={(e) => setEditingBook({...editingBook, short_description: e.target.value})}
                       rows="3"
                       placeholder="Deze verschijnt op de homepage..."
                       className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 font-body focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent"
@@ -273,8 +273,8 @@ return (
                       Volledige Beschrijving *
                     </label>
                     <textarea
-                      value={editingBook.fullDescription}
-                      onChange={(e) => setEditingBook({...editingBook, fullDescription: e.target.value})}
+                      value={editingBook.full_description}
+                      onChange={(e) => setEditingBook({...editingBook, full_description: e.target.value})}
                       rows="8"
                       placeholder="Gedetailleerde beschrijving voor de boekenpagina..."
                       className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 font-body focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent"
@@ -289,8 +289,8 @@ return (
                       </label>
                       <input
                         type="number"
-                        value={editingBook.publishYear}
-                        onChange={(e) => setEditingBook({...editingBook, publishYear: parseInt(e.target.value)})}
+                        value={editingBook.publish_year}
+                        onChange={(e) => setEditingBook({...editingBook, publish_year: parseInt(e.target.value)})}
                         className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 font-body focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent"
                       />
                     </div>
@@ -327,8 +327,8 @@ return (
                     </label>
                     <input
                       type="url"
-                      value={editingBook.orderUrl || ''}
-                      onChange={(e) => setEditingBook({...editingBook, orderUrl: e.target.value})}
+                      value={editingBook.order_url || ''}
+                      onChange={(e) => setEditingBook({...editingBook, order_url: e.target.value})}
                       placeholder="https://www.bol.com/..."
                       className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 font-body focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent"
                     />
@@ -385,7 +385,7 @@ return (
                       <div className="flex items-start gap-6">
                         {/* Book Cover Preview */}
                         <img 
-                          src={book.coverImage} 
+                          src={book.cover_image} 
                           alt={book.title}
                           className="w-24 h-36 object-cover rounded-lg border-2 border-slate-200 shadow-sm"
                           onError={(e) => {
@@ -399,10 +399,10 @@ return (
                             {book.title}
                           </h4>
                           <p className="text-slate-600 font-body text-sm mb-2">
-                            {book.author} • {book.publishYear} • {book.pages} pagina's
+                            {book.author} • {book.publish_year} • {book.pages} pagina's
                           </p>
                           <p className="text-slate-700 font-body line-clamp-2">
-                            {book.shortDescription}
+                            {book.short_description}
                           </p>
                         </div>
 
