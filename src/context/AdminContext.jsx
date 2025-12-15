@@ -1,111 +1,201 @@
 import { createContext, useContext, useState, useEffect } from 'react';
+import { supabase } from '../lib/supabase';
 
 const AdminContext = createContext();
 
 export function AdminProvider({ children }) {
-  // Hero sectie data
   const [heroData, setHeroData] = useState({
-    title: 'Mag ik je het hoofdpersonage van mijn boekenreeks voorstellen?',
-    paragraph1: '',
-    paragraph2: 'Zijn naam is Rik De Visscher. Hij is een Oostendse visserszoon die na zijn studies criminologie aan de UGent in de Arteveldestad is blijven hangen. Dat hij daar in zijn studententijd zijn toekomstige vrouw, Ria, heeft leren kennen, is niet vreemd aan die keuze. Samen krijgen ze twee kinderen: Femke en Arno. Rik klimt op in de hiërarchie van de Gentse flikken en schopt het tot hoofdinspecteur van de lokale recherche. In elk boek krijgt hij een zaak voorgeschoteld die hij tot een goed einde moet brengen. Hij doet dat samen met een team van toegewijde rechercheurs. Eén ervan is Aicha, een knappe Marokkaanse, waarvoor Rik meer dan een boontje heeft.',
-    paragraph3: 'Alle verhalen spelen zich af in Gent en ademen de couleur locale van de stad van licht en liefde. De thema’s die aan bod komen, zijn onder meer: misbruik in de kerk, intrafamiliaal geweld, drugscriminaliteit, pedocriminaliteit, wraak en verraad.  Wil je Rik De Visscher leren kennen? Lees dan onderstaande boeken. Ze zijn als e-books verkrijgbaar op kobo.com en bol.com. Je kan ze in volgorde of afzonderlijk lezen. Veel leesplezier! Als je klikt op de covers, kom je meer te weten over de inhoud. ',
+    title: 'Mysteries in de Schaduw',
+    paragraph1: 'Eerste alinea placeholder...',
+    paragraph2: 'Tweede alinea placeholder...',
+    paragraph3: 'Derde alinea placeholder...',
   });
 
-  // Auteur sectie data
   const [authorData, setAuthorData] = useState({
-    name: 'Herman Ros',
-    bio1: 'Hij is een topper!',
-    bio2: 'Hij woont samen met het Conneke in Kruishoutem.',
-    bio3: 'Naast schrijven houdt hij zich bezig met het zorgen voor zijn kippen en jaagt hij op mollen, ratten en muizen!',
-    photo: '/public/Herman Ros4.jpg',
+    name: 'Auteur Naam',
+    bio1: 'Eerste bio alinea...',
+    bio2: 'Tweede bio alinea...',
+    bio3: 'Derde bio alinea...',
+    photo: '/images/author.jpg',
   });
 
-  // Boeken data
-  const [books, setBooks] = useState([
-    {
-      id: 1,
-      title: "Luistervinck",
-      author: "Herman Ros",
-      coverImage: "/public/Cover_Luistervinck_small.jpg",
-      shortDescription: "Korte beschrijving",
-      fullDescription: "Volledige beschrijving",
-      publishYear: 2024,
-      pages: 350,
-      isbn: "978-1234567890"
-    },
-        {
-      id: 2,
-      title: "Vermissing",
-      author: "Herman Ros",
-      coverImage: "/public/vermissing.jpg",
-      shortDescription: "Korte beschrijving",
-      fullDescription: "Volledige beschrijving",
-      publishYear: 2024,
-      pages: 350,
-      isbn: "978-1234567890"
-    },
-  ]);
+  const [books, setBooks] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Laad data uit storage bij opstarten
+  // Laad data uit Supabase
   useEffect(() => {
     const loadData = async () => {
       try {
-        const heroResult = await window.storage.get('hero-data');
-        const authorResult = await window.storage.get('author-data');
-        const booksResult = await window.storage.get('books-data');
+        // Load hero data
+        const { data: heroResult, error: heroError } = await supabase
+          .from('hero_data')
+          .select('*')
+          .eq('id', 1)
+          .single();
+        
+        if (!heroError && heroResult) {
+          setHeroData({
+            title: heroResult.title,
+            paragraph1: heroResult.paragraph1,
+            paragraph2: heroResult.paragraph2,
+            paragraph3: heroResult.paragraph3,
+          });
+        }
 
-        if (heroResult) setHeroData(JSON.parse(heroResult.value));
-        if (authorResult) setAuthorData(JSON.parse(authorResult.value));
-        if (booksResult) setBooks(JSON.parse(booksResult.value));
+        // Load author data
+        const { data: authorResult, error: authorError } = await supabase
+          .from('author_data')
+          .select('*')
+          .eq('id', 1)
+          .single();
+        
+        if (!authorError && authorResult) {
+          setAuthorData({
+            name: authorResult.name,
+            bio1: authorResult.bio1,
+            bio2: authorResult.bio2,
+            bio3: authorResult.bio3,
+            photo: authorResult.photo,
+          });
+        }
+
+        // Load books
+        const { data: booksResult, error: booksError } = await supabase
+          .from('books')
+          .select('*')
+          .order('created_at', { ascending: false });
+        
+        if (!booksError && booksResult) {
+          setBooks(booksResult);
+        }
+
       } catch (error) {
-        console.log('Geen opgeslagen data gevonden, gebruik defaults');
+        console.error('Error loading data:', error);
+      } finally {
+        setLoading(false);
       }
     };
+    
     loadData();
   }, []);
 
-  // Save functies
+  // Save hero data
   const saveHeroData = async (data) => {
     setHeroData(data);
     try {
-      await window.storage.set('hero-data', JSON.stringify(data));
+      const { error } = await supabase
+        .from('hero_data')
+        .update({
+          title: data.title,
+          paragraph1: data.paragraph1,
+          paragraph2: data.paragraph2,
+          paragraph3: data.paragraph3,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', 1);
+      
+      if (error) throw error;
     } catch (error) {
-      console.error('Fout bij opslaan:', error);
+      console.error('Error saving hero data:', error);
+      throw error;
     }
   };
 
+  // Save author data
   const saveAuthorData = async (data) => {
     setAuthorData(data);
     try {
-      await window.storage.set('author-data', JSON.stringify(data));
+      const { error } = await supabase
+        .from('author_data')
+        .update({
+          name: data.name,
+          bio1: data.bio1,
+          bio2: data.bio2,
+          bio3: data.bio3,
+          photo: data.photo,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', 1);
+      
+      if (error) throw error;
     } catch (error) {
-      console.error('Fout bij opslaan:', error);
+      console.error('Error saving author data:', error);
+      throw error;
     }
   };
 
-  const saveBooks = async (data) => {
-    setBooks(data);
-    try {
-      await window.storage.set('books-data', JSON.stringify(data));
-    } catch (error) {
-      console.error('Fout bij opslaan:', error);
-    }
-  };
-
+  // Add book
   const addBook = async (book) => {
-    const newBook = { ...book, id: Date.now() };
-    const updatedBooks = [...books, newBook];
-    await saveBooks(updatedBooks);
+    try {
+      const { data, error } = await supabase
+        .from('books')
+        .insert([{
+          title: book.title,
+          author: book.author,
+          cover_image: book.coverImage,
+          short_description: book.shortDescription,
+          full_description: book.fullDescription,
+          publish_year: book.publishYear,
+          pages: book.pages,
+          isbn: book.isbn,
+          order_url: book.orderUrl
+        }])
+        .select();
+      
+      if (error) throw error;
+      
+      if (data && data[0]) {
+        setBooks([...books, data[0]]);
+      }
+    } catch (error) {
+      console.error('Error adding book:', error);
+      throw error;
+    }
   };
 
+  // Update book
   const updateBook = async (id, updatedBook) => {
-    const updatedBooks = books.map(b => b.id === id ? { ...b, ...updatedBook } : b);
-    await saveBooks(updatedBooks);
+    try {
+      const { error } = await supabase
+        .from('books')
+        .update({
+          title: updatedBook.title,
+          author: updatedBook.author,
+          cover_image: updatedBook.coverImage,
+          short_description: updatedBook.shortDescription,
+          full_description: updatedBook.fullDescription,
+          publish_year: updatedBook.publishYear,
+          pages: updatedBook.pages,
+          isbn: updatedBook.isbn,
+          order_url: updatedBook.orderUrl,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', id);
+      
+      if (error) throw error;
+      
+      setBooks(books.map(b => b.id === id ? { ...b, ...updatedBook } : b));
+    } catch (error) {
+      console.error('Error updating book:', error);
+      throw error;
+    }
   };
 
+  // Delete book
   const deleteBook = async (id) => {
-    const updatedBooks = books.filter(b => b.id !== id);
-    await saveBooks(updatedBooks);
+    try {
+      const { error } = await supabase
+        .from('books')
+        .delete()
+        .eq('id', id);
+      
+      if (error) throw error;
+      
+      setBooks(books.filter(b => b.id !== id));
+    } catch (error) {
+      console.error('Error deleting book:', error);
+      throw error;
+    }
   };
 
   return (
@@ -113,6 +203,7 @@ export function AdminProvider({ children }) {
       heroData,
       authorData,
       books,
+      loading,
       saveHeroData,
       saveAuthorData,
       addBook,
