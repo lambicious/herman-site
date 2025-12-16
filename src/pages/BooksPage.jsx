@@ -4,7 +4,7 @@ import { useAdmin } from '../context/AdminContext';
 function BooksPage() {
 const { books } = useAdmin();
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
+    <div className="min-h-screen bg-gray-50 py-12 pt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Page Header */}

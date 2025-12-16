@@ -6,11 +6,28 @@ function HomePage() {
 
   return (
     <div className="min-h-screen bg-slate-100">
+
+      {/* Auteur logo boven hero */}
+      <div className="relative overflow-hidden">
+        {/* Zachte achtergrond */}
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-50 via-white to-transparent"></div>
+
+        <div className="relative max-w-7xl mx-auto px-4 pt-10 pb-12 flex justify-center">
+          <img
+            src="/Herman_Ros_transparant.png"
+            alt="Herman Ros"
+            className="w-64 sm:w-72 md:w-96"
+          />
+        </div>
+      </div>
+
       
 {/* Hero Sectie - Modern & Licht */}
       <section className="relative bg-white py-20 overflow-hidden">
         {/* Subtiele gradient achtergrond */}
         <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-white to-amber-50/30"></div>
+
+
         
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
@@ -31,9 +48,12 @@ function HomePage() {
 
             {/* Rechter Kolom - Tekst */}
             <div className="order-1 md:order-2">
-              <h1 className="text-5xl md:text-3xl font-display font-bold mb-6 text-slate-900 tracking-tight leading-tight">
+              {/* Auteur naam als grafisch element */}
+
+              <h1 className="text-3xl md:text-4xl font-display font-bold mb-6 text-slate-900 tracking-tight leading-tight">
                 {heroData.title}
               </h1>
+
               {/* Moderne accent lijn */}
               <div className="w-16 h-1 bg-amber-500 mb-8 rounded-full"></div>
               
@@ -88,7 +108,7 @@ function HomePage() {
               <div className="relative">
                 <div className="absolute -inset-4 bg-amber-600/20 rounded-lg"></div>
                 <img 
-                  src={authorData.photo}
+                  src={"images/Herman Ros4.jpg"}
                   alt={authorData.name}
                   className="relative rounded-lg shadow-2xl w-full max-w-md mx-auto border-4 border-amber-700/30"
                 />

@@ -7,7 +7,10 @@ function AdminLoginPage() {
   const navigate = useNavigate();
 
   // Simpel wachtwoord (later kan je dit complexer maken)
-  const ADMIN_PASSWORD = 'admin123';
+ const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_KEY;
+ if (!ADMIN_PASSWORD) {
+  throw new Error('VITE_ADMIN_PASSWORD not configured');
+}
 
   const handleLogin = (e) => {
     e.preventDefault();
