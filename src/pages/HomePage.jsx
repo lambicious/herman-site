@@ -37,7 +37,7 @@ function HomePage() {
               <div className="relative">
                 {/* Subtiele shadow in plaats van heavy border */}
                 <img 
-                  src="/public/Rik De Visscher.png" 
+                  src="/Rik De Visscher.png" 
                   alt="Mystery Scene"
                   className="rounded-2xl shadow-2xl w-full hover:shadow-3xl transition-shadow duration-300"
                 />
