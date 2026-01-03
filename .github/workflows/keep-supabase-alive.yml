@@ -1,0 +1,19 @@
+name: Keep Supabase Active
+
+on:
+  schedule:
+    # Draait 2x per week (maandag en donderdag om 10:00 UTC)
+    - cron: '0 10 * * 1,4'
+  workflow_dispatch: # Maakt het mogelijk om handmatig te triggeren
+
+jobs:
+  ping-database:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Ping Supabase Database
+        run: |
+          curl -X POST '${{ secrets.SUPABASE_URL }}/rest/v1/hero_data?select=id' \
+            -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
+            -H "Content-Type: application/json"
+          echo "Database pinged successfully!"
