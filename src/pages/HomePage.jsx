@@ -1,8 +1,18 @@
 import BookCard from '../components/BookCard';
 import { useAdmin } from '../context/AdminContext';
+import { useState, useEffect, useRef } from 'react';
 
 function HomePage() {
   const { heroData, authorData, books } = useAdmin();
+const [showFullHero, setShowFullHero] = useState(false);
+const textRef = useRef(null);
+const [textHeight, setTextHeight] = useState(0);
+
+useEffect(() => {
+  if (textRef.current) {
+    setTextHeight(textRef.current.scrollHeight);
+  }
+}, [heroData, showFullHero]);
 
   return (
 <div className="min-h-screen bg-slate-100">
@@ -29,63 +39,110 @@ function HomePage() {
   </div>
 
 
-
+{/* Hero Sectie - Modern & Licht met dynamische hoogte */}
+<section 
+  className="relative bg-white overflow-hidden"
+>
+  {/* Subtiele gradient achtergrond */}
+  <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-white to-amber-50/30"></div>
+  
+  <div 
+    className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 transition-all duration-700 ease-in-out"
+    style={{
+      paddingTop: showFullHero ? '5rem' : '3rem',
+      paddingBottom: showFullHero ? '5rem' : '2rem'
+    }}
+  >
+    <div 
+      className="grid grid-cols-1 md:grid-cols-2 items-start transition-all duration-700 ease-in-out"
+      style={{
+        gap: showFullHero ? '4rem' : '2rem'
+      }}
+    >
       
-{/* Hero Sectie - Modern & Licht */}
-      <section className="relative bg-white py-20 overflow-hidden">
-        {/* Subtiele gradient achtergrond */}
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-white to-amber-50/30"></div>
+{/* Linker Kolom - Afbeelding */}
+<div className="order-2 md:order-1 transition-all duration-700 ease-in-out">
+  <div className="relative">
+    <div 
+      className="relative rounded-2xl shadow-2xl overflow-hidden transition-all duration-700 ease-in-out hover:shadow-3xl"
+      style={{
+        width: showFullHero ? '100%' : '50%',
+        marginLeft: 'auto',
+        marginRight: 'auto'
+      }}
+    >
+      <img 
+        src="/Rik De Visscher.png" 
+        alt="Mystery Scene"
+        className="w-full h-auto object-contain"
+      />
+    </div>
+    <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-amber-400/20 rounded-full blur-3xl -z-10 transition-all duration-700"></div>
+  </div>
+</div>
 
+      {/* Rechter Kolom - Tekst */}
+      <div className="order-1 md:order-2">
+        <h1 className="text-3xl md:text-4xl font-display font-bold mb-6 text-slate-900 tracking-tight leading-tight">
+          {heroData.title}
+        </h1>
 
+        {/* Moderne accent lijn */}
+        <div className="w-16 h-1 bg-amber-500 mb-8 rounded-full"></div>
         
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
-            
-            {/* Linker Kolom - Afbeelding */}
-            <div className="order-2 md:order-1">
-              <div className="relative">
-                {/* Subtiele shadow in plaats van heavy border */}
-                <img 
-                  src="/Rik De Visscher.png" 
-                  alt="Mystery Scene"
-                  className="rounded-2xl shadow-2xl w-full hover:shadow-3xl transition-shadow duration-300"
-                />
-                {/* Optionele accent */}
-                <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-amber-400/20 rounded-full blur-3xl -z-10"></div>
-              </div>
-            </div>
-
-            {/* Rechter Kolom - Tekst */}
-            <div className="order-1 md:order-2">
-              {/* Auteur naam als grafisch element */}
-
-              <h1 className="text-3xl md:text-4xl font-display font-bold mb-6 text-slate-900 tracking-tight leading-tight">
-                {heroData.title}
-              </h1>
-
-              {/* Moderne accent lijn */}
-              <div className="w-16 h-1 bg-amber-500 mb-8 rounded-full"></div>
-              
-              <div className="text-lg text-slate-700 leading-relaxed font-body space-y-4">
-                <p>{heroData.paragraph1}</p>
+        <div className="text-lg text-slate-700 leading-relaxed font-body" ref={textRef}>
+          {/* Eerste paragraaf - altijd zichtbaar */}
+          <p className="mb-4">{heroData.paragraph1}</p>
+          
+          {/* Overige paragrafen - smooth expand/collapse */}
+          <div 
+            className="grid transition-all duration-700 ease-in-out"
+            style={{
+              gridTemplateRows: showFullHero ? '1fr' : '0fr',
+              opacity: showFullHero ? 1 : 0
+            }}
+          >
+            <div className="overflow-hidden">
+              <div className="space-y-4 pb-4">
                 <p>{heroData.paragraph2}</p>
                 <p>{heroData.paragraph3}</p>
               </div>
-
-              {/* Optionele CTA button */}
-              <div className="mt-8">
-                <a 
-                  href="books" 
-                  className="inline-block bg-slate-900 hover:bg-slate-800 text-white px-8 py-4 rounded-full font-body font-semibold transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl"
-                >
-                  Ontdek mijn boeken →
-                </a>
-              </div>
             </div>
-
           </div>
+          
+          {/* Lees meer / Lees minder knop */}
+          <button
+            onClick={() => setShowFullHero(!showFullHero)}
+            className="text-slate-900 hover:text-amber-600 font-semibold transition-colors flex items-center gap-2 group mt-4"
+          >
+            {showFullHero ? 'Lees minder' : 'Lees meer'}
+            <svg 
+              className={`w-4 h-4 transition-transform duration-300 ${
+                showFullHero ? 'rotate-180' : 'rotate-0'
+              }`} 
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
         </div>
-      </section>
+
+        {/* CTA button */}
+        <div className="mt-8">
+          <a 
+            href="/books" 
+            className="inline-block bg-slate-900 hover:bg-slate-800 text-white px-8 py-4 rounded-full font-body font-semibold transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl"
+          >
+            Ontdek mijn boeken →
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
 
       {/* Boeken Sectie - Nu met admin data */}
       <section className="py-20 bg-slate-50">
