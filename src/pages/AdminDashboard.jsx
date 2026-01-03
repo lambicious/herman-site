@@ -12,7 +12,13 @@ function AdminDashboard() {
   const [saved, setSaved] = useState(false);
   const [showBookForm, setShowBookForm] = useState(false);
   const [editingBook, setEditingBook] = useState(null);
-  
+    useEffect(() => {
+  setHeroForm(heroData);
+}, [heroData]);
+
+useEffect(() => {
+  setAuthorForm(authorData);
+}, [authorData]);
 
   // Check of ingelogd
   useEffect(() => {

@@ -69,10 +69,10 @@ function BookDetailPage() {
                   <span className="font-semibold w-32">Pagina's:</span>
                   <span>{book.pages}</span>
                 </div>
-                <div className="flex items-center">
+               {/* <div className="flex items-center">
                   <span className="font-semibold w-32">ISBN:</span>
                   <span>{book.isbn}</span>
-                </div>
+                </div> */}
               </div>
 
               {/* Volledige Beschrijving */}

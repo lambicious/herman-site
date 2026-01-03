@@ -5,7 +5,7 @@ const AdminContext = createContext();
 
 export function AdminProvider({ children }) {
   const [heroData, setHeroData] = useState({
-    title: 'Mysteries in de Schaduw',
+    title: 'Loading',
     paragraph1: 'Eerste alinea placeholder...',
     paragraph2: 'Tweede alinea placeholder...',
     paragraph3: 'Derde alinea placeholder...',
@@ -134,11 +134,11 @@ export function AdminProvider({ children }) {
           author: book.author,
           cover_image: book.cover_image,
           short_description: book.short_description,
-          full_description: book.fullDescription,
-          publish_year: book.publishYear,
+          full_description: book.full_description,
+          publish_year: book.publish_year,
           pages: book.pages,
           isbn: book.isbn,
-          order_url: book.orderUrl
+          order_url: book.order_url
         }])
         .select();
       
@@ -163,11 +163,11 @@ export function AdminProvider({ children }) {
           author: updatedBook.author,
           cover_image: updatedBook.cover_image,
           short_description: updatedBook.short_description,
-          full_description: updatedBook.fullDescription,
-          publish_year: updatedBook.publishYear,
+          full_description: updatedBook.full_description,
+          publish_year: updatedBook.publish_year,
           pages: updatedBook.pages,
           isbn: updatedBook.isbn,
-          order_url: updatedBook.orderUrl,
+          order_url: updatedBook.order_url,
           updated_at: new Date().toISOString()
         })
         .eq('id', id);
