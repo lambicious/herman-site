@@ -13,8 +13,7 @@ const { books } = useAdmin();
             Alle Boeken
           </h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Ontdek mijn volledige collectie verhalen. Van spannende thrillers 
-            tot hartverwarmende romans - elk boek brengt je op een unieke reis.
+            Ontdek mijn volledige collectie verhalen.
           </p>
         </div>
 

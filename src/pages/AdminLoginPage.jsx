@@ -81,15 +81,6 @@ function AdminLoginPage() {
             </a>
           </div>
         </div>
-
-        <div className="mt-4 text-center">
-          <p className="text-gray-500 text-sm font-body">
-            Standaard wachtwoord: <span className="text-amber-500">admin123</span>
-          </p>
-          <p className="text-gray-600 text-xs mt-1 font-body">
-            (Dit kan je later aanpassen)
-          </p>
-        </div>
       </div>
     </div>
   );
