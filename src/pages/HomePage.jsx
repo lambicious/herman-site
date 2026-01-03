@@ -72,7 +72,7 @@ useEffect(() => {
       }}
     >
       <img 
-        src="/Rik De Visscher.png" 
+        src="/Rik De Visscher.jpg" 
         alt="Mystery Scene"
         className="w-full h-auto object-contain"
       />
