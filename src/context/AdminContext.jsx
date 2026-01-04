@@ -1,88 +1,93 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '../lib/supabase';
 
 const AdminContext = createContext();
 
+// Fetch functies
+const fetchHeroData = async () => {
+  const { data, error } = await supabase
+    .from('hero_data')
+    .select('*')
+    .eq('id', 1)
+    .single();
+  
+  if (error) throw error;
+  
+  return {
+    title: data.title,
+    paragraph1: data.paragraph1,
+    paragraph2: data.paragraph2,
+    paragraph3: data.paragraph3,
+  };
+};
+
+const fetchAuthorData = async () => {
+  const { data, error } = await supabase
+    .from('author_data')
+    .select('*')
+    .eq('id', 1)
+    .single();
+  
+  if (error) throw error;
+  
+  return {
+    name: data.name,
+    bio1: data.bio1,
+    bio2: data.bio2,
+    bio3: data.bio3,
+    photo: data.photo,
+  };
+};
+
+const fetchBooks = async () => {
+  const { data, error } = await supabase
+    .from('books')
+    .select('*')
+    .order('created_at', { ascending: false });
+  
+  if (error) throw error;
+  return data;
+};
+
 export function AdminProvider({ children }) {
-  const [heroData, setHeroData] = useState({
-    title: 'Loading',
-    paragraph1: 'Eerste alinea placeholder...',
-    paragraph2: 'Tweede alinea placeholder...',
-    paragraph3: 'Derde alinea placeholder...',
+  const queryClient = useQueryClient();
+
+  // Use React Query met caching
+  const { data: heroData = {
+    title: '',
+    paragraph1: '',
+    paragraph2: '',
+    paragraph3: '',
+  }, isLoading: heroLoading } = useQuery({
+    queryKey: ['heroData'],
+    queryFn: fetchHeroData,
+    staleTime: 1000 * 60 * 5, // 5 minuten
   });
 
-  const [authorData, setAuthorData] = useState({
+  const { data: authorData = {
     name: 'Auteur Naam',
     bio1: 'Eerste bio alinea...',
     bio2: 'Tweede bio alinea...',
     bio3: 'Derde bio alinea...',
     photo: '/images/author.jpg',
+  }, isLoading: authorLoading } = useQuery({
+    queryKey: ['authorData'],
+    queryFn: fetchAuthorData,
+    staleTime: 1000 * 60 * 5,
   });
 
-  const [books, setBooks] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { data: books = [], isLoading: booksLoading } = useQuery({
+    queryKey: ['books'],
+    queryFn: fetchBooks,
+    staleTime: 1000 * 60 * 5,
+  });
 
-  // Laad data uit Supabase
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        // Load hero data
-        const { data: heroResult, error: heroError } = await supabase
-          .from('hero_data')
-          .select('*')
-          .eq('id', 1)
-          .single();
-        
-        if (!heroError && heroResult) {
-          setHeroData({
-            title: heroResult.title,
-            paragraph1: heroResult.paragraph1,
-            paragraph2: heroResult.paragraph2,
-            paragraph3: heroResult.paragraph3,
-          });
-        }
+  const loading = heroLoading || authorLoading || booksLoading;
 
-        // Load author data
-        const { data: authorResult, error: authorError } = await supabase
-          .from('author_data')
-          .select('*')
-          .eq('id', 1)
-          .single();
-        
-        if (!authorError && authorResult) {
-          setAuthorData({
-            name: authorResult.name,
-            bio1: authorResult.bio1,
-            bio2: authorResult.bio2,
-            bio3: authorResult.bio3,
-            photo: authorResult.photo,
-          });
-        }
-
-        // Load books
-        const { data: booksResult, error: booksError } = await supabase
-          .from('books')
-          .select('*')
-          .order('created_at', { ascending: false });
-        
-        if (!booksError && booksResult) {
-          setBooks(booksResult);
-        }
-
-      } catch (error) {
-        console.error('Error loading data:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    loadData();
-  }, []);
-
-  // Save hero data
-  const saveHeroData = async (data) => {
-    setHeroData(data);
-    try {
+  // Mutations
+  const saveHeroMutation = useMutation({
+    mutationFn: async (data) => {
       const { error } = await supabase
         .from('hero_data')
         .update({
@@ -95,16 +100,15 @@ export function AdminProvider({ children }) {
         .eq('id', 1);
       
       if (error) throw error;
-    } catch (error) {
-      console.error('Error saving hero data:', error);
-      throw error;
+      return data;
+    },
+    onSuccess: (data) => {
+      queryClient.setQueryData(['heroData'], data);
     }
-  };
+  });
 
-  // Save author data
-  const saveAuthorData = async (data) => {
-    setAuthorData(data);
-    try {
+  const saveAuthorMutation = useMutation({
+    mutationFn: async (data) => {
       const { error } = await supabase
         .from('author_data')
         .update({
@@ -118,15 +122,15 @@ export function AdminProvider({ children }) {
         .eq('id', 1);
       
       if (error) throw error;
-    } catch (error) {
-      console.error('Error saving author data:', error);
-      throw error;
+      return data;
+    },
+    onSuccess: (data) => {
+      queryClient.setQueryData(['authorData'], data);
     }
-  };
+  });
 
-  // Add book
-  const addBook = async (book) => {
-    try {
+  const addBookMutation = useMutation({
+    mutationFn: async (book) => {
       const { data, error } = await supabase
         .from('books')
         .insert([{
@@ -143,19 +147,15 @@ export function AdminProvider({ children }) {
         .select();
       
       if (error) throw error;
-      
-      if (data && data[0]) {
-        setBooks([...books, data[0]]);
-      }
-    } catch (error) {
-      console.error('Error adding book:', error);
-      throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(['books']);
     }
-  };
+  });
 
-  // Update book
-  const updateBook = async (id, updatedBook) => {
-    try {
+  const updateBookMutation = useMutation({
+    mutationFn: async ({ id, updatedBook }) => {
       const { error } = await supabase
         .from('books')
         .update({
@@ -173,29 +173,45 @@ export function AdminProvider({ children }) {
         .eq('id', id);
       
       if (error) throw error;
-      
-      setBooks(books.map(b => b.id === id ? { ...b, ...updatedBook } : b));
-    } catch (error) {
-      console.error('Error updating book:', error);
-      throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(['books']);
     }
-  };
+  });
 
-  // Delete book
-  const deleteBook = async (id) => {
-    try {
+  const deleteBookMutation = useMutation({
+    mutationFn: async (id) => {
       const { error } = await supabase
         .from('books')
         .delete()
         .eq('id', id);
       
       if (error) throw error;
-      
-      setBooks(books.filter(b => b.id !== id));
-    } catch (error) {
-      console.error('Error deleting book:', error);
-      throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(['books']);
     }
+  });
+
+  // Wrapper functies (zelfde API als voorheen)
+  const saveHeroData = async (data) => {
+    await saveHeroMutation.mutateAsync(data);
+  };
+
+  const saveAuthorData = async (data) => {
+    await saveAuthorMutation.mutateAsync(data);
+  };
+
+  const addBook = async (book) => {
+    await addBookMutation.mutateAsync(book);
+  };
+
+  const updateBook = async (id, updatedBook) => {
+    await updateBookMutation.mutateAsync({ id, updatedBook });
+  };
+
+  const deleteBook = async (id) => {
+    await deleteBookMutation.mutateAsync(id);
   };
 
   return (
